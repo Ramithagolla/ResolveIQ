@@ -179,3 +179,8 @@ pytest -q
 ## Screenshots to capture
 
 Dashboard, incident analysis, Hindsight recall list, memory detail, learning / memory evolution, before vs after Hindsight, terminal logs of retain/recall.
+
+
+## Articles
+Article 1 : https://medium.com/@singireddygeethasri/we-gave-our-incident-agent-a-memory-it-wasnt-enough-dce3396bec38
+Article 2 : https://medium.com/@ramithasri15/what-happens-when-an-ai-agent-remembers-your-production-incidents-8ddfcef91da6
