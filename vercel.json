@@ -11,7 +11,7 @@
   },
   "rewrites": [
     {
-      "source": "/api/:path*",
+      "source": "/api/(.*)",
       "destination": {
         "service": "backend"
       }
@@ -23,4 +23,4 @@
       }
     }
   ]
-}
+}
