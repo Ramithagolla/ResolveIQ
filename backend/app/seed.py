@@ -8,7 +8,11 @@ from sqlalchemy.orm import Session
 
 from app.models import Incident, MemoryCatalog
 
-REAL_INCIDENTS_PATH = Path(__file__).resolve().parents[2] / "data" / "incidents" / "real_incidents.json"
+_CANDIDATE_PATHS = [
+    Path(__file__).resolve().parents[1] / "data" / "incidents" / "real_incidents.json",
+    Path(__file__).resolve().parents[2] / "data" / "incidents" / "real_incidents.json",
+]
+REAL_INCIDENTS_PATH = next((p for p in _CANDIDATE_PATHS if p.exists()), _CANDIDATE_PATHS[0])
 
 LEGACY_SEED_INCIDENTS: list[dict] = [
     {
@@ -87,13 +91,16 @@ LEGACY_SEED_INCIDENTS: list[dict] = [
 
 
 def load_real_incidents() -> list[dict]:
-    if not REAL_INCIDENTS_PATH.exists():
-        return []
-    try:
-        with open(REAL_INCIDENTS_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return []
+    for path in _CANDIDATE_PATHS:
+        if path.exists():
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    if data:
+                        return data
+            except Exception:
+                pass
+    return []
 
 
 def _timeline(created: datetime, resolved: bool) -> list[dict]:

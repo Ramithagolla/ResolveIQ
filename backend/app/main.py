@@ -45,6 +45,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    logger.error("Unhandled exception on %s: %s", request.url.path, exc, exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": str(exc), "path": request.url.path},
+    )
+
+
 app.include_router(health.router, prefix="/api")
 app.include_router(incidents.router, prefix="/api")
 app.include_router(memory.router, prefix="/api")

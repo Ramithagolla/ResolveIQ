@@ -12,7 +12,11 @@ from app.services.incidents import run_held_out_evaluation
 
 router = APIRouter()
 
-DATA_DIR = ROOT / "data" / "incidents"
+_CANDIDATE_DATA_DIRS = [
+    Path(__file__).resolve().parents[2] / "data" / "incidents",
+    ROOT / "data" / "incidents",
+]
+DATA_DIR = next((d for d in _CANDIDATE_DATA_DIRS if d.exists()), _CANDIDATE_DATA_DIRS[0])
 
 
 @router.get("/evaluation", response_model=EvaluationSummary)
