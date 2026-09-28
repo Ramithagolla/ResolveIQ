@@ -1,3 +1,5 @@
+import logging
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -8,18 +10,29 @@ from app.memory.hindsight_service import get_memory_service
 from app.routers import demo, evaluation, health, incidents, memory
 from app.seed import retain_seed_memories, seed_if_empty
 
+logger = logging.getLogger(__name__)
+
+_IS_VERCEL = bool(os.environ.get("VERCEL"))
+
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    init_db()
-    db = SessionLocal()
     try:
-        seed_if_empty(db)
-        memory = get_memory_service()
-        await memory.ensure_bank()
-        await retain_seed_memories(db, memory)
-    finally:
-        db.close()
+        init_db()
+        db = SessionLocal()
+        try:
+            seed_if_empty(db)
+            mem = get_memory_service()
+            await mem.ensure_bank()
+            # On Vercel serverless, skip bulk re-retain — memories already
+            # live in Hindsight Cloud and re-retaining 16+ items would
+            # exceed the function timeout.
+            if not _IS_VERCEL:
+                await retain_seed_memories(db, mem)
+        finally:
+            db.close()
+    except Exception as exc:
+        logger.warning("Lifespan init warning (non-fatal): %s", exc)
     yield
 
 

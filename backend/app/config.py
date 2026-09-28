@@ -1,9 +1,17 @@
+import os
 from functools import lru_cache
 from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ROOT = Path(__file__).resolve().parents[2]
+
+# Vercel serverless: working directory is read-only, only /tmp is writable.
+_DEFAULT_DB = (
+    "sqlite:////tmp/resolveiq.db"
+    if os.environ.get("VERCEL")
+    else "sqlite:///./resolveiq.db"
+)
 
 
 class Settings(BaseSettings):
@@ -21,7 +29,7 @@ class Settings(BaseSettings):
     llm_base_url: str = "https://api.openai.com/v1"
     llm_model: str = "gpt-4o-mini"
 
-    database_url: str = "sqlite:///./resolveiq.db"
+    database_url: str = _DEFAULT_DB
     memory_provider: str = "hindsight"
 
 
