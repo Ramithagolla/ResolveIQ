@@ -189,3 +189,5 @@ Article 2 : https://medium.com/@ramithasri15/what-happens-when-an-ai-agent-remem
 Reddit post 1: https: //www.reddit.com/r/LLMDevs/s/TwKhJoiX8n 
 Reddit Post 2: https://www.reddit.com/r/LLMDevs/s/LnyasnYHXp
 
+LinkedIn Post1: https://lnkd.in/p/dQc4HJU3
+linkedin post2 :  https://lnkd.in/p/dVAf_aGg
