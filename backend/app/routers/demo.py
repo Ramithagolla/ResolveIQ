@@ -41,10 +41,29 @@ async def launch_demo(db: Session = Depends(get_db)):
     memory = get_memory_service()
     await retain_seed_memories(db, memory)
     historical = db.query(Incident).filter(Incident.public_id == "INC-1042").one_or_none()
-    incident = create_incident(db, DEMO_INCIDENT)
+
+    # Idempotent: reuse an existing open demo incident instead of creating a duplicate
+    existing_demo = (
+        db.query(Incident)
+        .filter(
+            Incident.service == DEMO_INCIDENT["service"],
+            Incident.deployment == DEMO_INCIDENT["deployment"],
+            Incident.status == "open",
+        )
+        .order_by(Incident.created_at.desc())
+        .first()
+    )
+    if existing_demo:
+        incident = existing_demo
+        demo_already_active = True
+    else:
+        incident = create_incident(db, DEMO_INCIDENT)
+        demo_already_active = False
+
     return {
         "historical": incident_to_dict(historical) if historical else None,
         "new_incident": incident_to_dict(incident),
+        "demo_already_active": demo_already_active,
         "related": ["INC-1042", "INC-0981", "INC-0877"],
         "steps": [
             "Historical incident INC-1042 already exists and is retained in memory.",

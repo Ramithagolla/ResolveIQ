@@ -66,12 +66,18 @@ export default function Evaluation() {
       <div>
         <div className="flex items-center gap-2 text-xs font-mono text-teal-400 uppercase tracking-wider">
           <Sparkles size={14} />
-          <span>Empirical Evaluation Framework</span>
+          <span>Experimental Evaluation Framework</span>
         </div>
-        <h1 className="text-3xl font-extrabold text-white mt-1 tracking-tight">MEMORY IMPACT</h1>
+        <h1 className="text-3xl font-extrabold text-white mt-1 tracking-tight">EXPERIMENTAL MEMORY EVALUATION</h1>
         <p className="text-sm text-slate-300 mt-1 font-medium italic">
           "Does organizational memory actually improve incident resolution?"
         </p>
+        <div className="mt-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20 text-xs text-amber-200 leading-relaxed">
+          <span className="font-semibold text-amber-300">Experimental Evaluation:</span>{" "}
+          This evaluation measures whether relevant historical incident memories are surfaced for a predefined
+          set of incident patterns. Results are application-level evaluation only and are not a benchmark of
+          Hindsight retrieval quality. Accuracy numbers reflect matches on this local demo dataset.
+        </div>
       </div>
 
       {/* KPI Cards */}

@@ -163,21 +163,28 @@ class HindsightService:
             logger.warning("MEMORY_PROVIDER=local — using development store, not Hindsight")
             return
 
+        # Hindsight provider requested
+        self.provider = "hindsight"
+        api_key = (self.settings.hindsight_api_key or "").strip()
+        if not api_key or api_key.startswith("your-"):
+            self.available = False
+            self.error = "Real Hindsight connectivity is configured but could not be live-verified because credentials were unavailable."
+            logger.info("MEMORY_PROVIDER=hindsight configured, but HINDSIGHT_API_KEY is not set.")
+            return
+
         try:
             from hindsight_client import Hindsight
 
             kwargs: dict[str, Any] = {
                 "base_url": self.settings.hindsight_base_url.rstrip("/"),
+                "api_key": api_key,
             }
-            if self.settings.hindsight_api_key:
-                kwargs["api_key"] = self.settings.hindsight_api_key
             self._client = Hindsight(**kwargs)
-            self.provider = "hindsight"
             self.available = True
+            self.error = None
         except Exception as exc:  # pragma: no cover
             self.available = False
-            self.provider = "unavailable"
-            self.error = str(exc)
+            self.error = f"Failed to initialize Hindsight client: {exc}"
             logger.exception("Failed to initialize Hindsight client")
 
     async def ensure_bank(self) -> None:

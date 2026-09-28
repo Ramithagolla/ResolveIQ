@@ -215,6 +215,7 @@ export const api = {
     request<{
       historical: Incident;
       new_incident: Incident;
+      demo_already_active: boolean;
       related: string[];
       steps: string[];
       memory_provider: string;

@@ -19,6 +19,9 @@ export function HindsightStatusCard({
     setError(null);
     try {
       const demo = await api.launchDemo();
+      if (demo.demo_already_active) {
+        setError("Demo already active — navigating to existing incident.");
+      }
       navigate(`/incidents/${demo.new_incident.public_id}?demo=1`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Demo launch failed");
@@ -78,15 +81,23 @@ export function HindsightStatusCard({
                 <AlertCircle size={16} className="text-amber-400" />
               )}
               <span className="text-sm font-semibold text-white">
-                {isHindsightCloud ? "Hindsight Cloud Engine" : isLocal ? "Local Development Store" : "Unavailable"}
+                {isHindsightCloud && health?.memory_available
+                  ? "Hindsight Connected"
+                  : isHindsightCloud && !health?.memory_available
+                  ? "Hindsight Unavailable"
+                  : isLocal
+                  ? "Local Development Store"
+                  : "Unavailable"}
               </span>
             </div>
             <p className="text-[11px] text-slate-400">
-              {isHindsightCloud
+              {isHindsightCloud && health?.memory_available
                 ? "Connected to Hindsight SDK endpoint with active memory recall."
+                : isHindsightCloud && !health?.memory_available
+                ? health?.memory_error || "Connection could not be verified — real Hindsight credentials unavailable."
                 : isLocal
                 ? "Running local dev fallback index (MEMORY_PROVIDER=local)."
-                : health?.memory_error || "Memory service unreachable."}
+                : "Memory service unreachable."}
             </p>
           </div>
 

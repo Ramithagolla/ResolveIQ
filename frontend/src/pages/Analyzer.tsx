@@ -59,7 +59,7 @@ export default function Analyzer() {
       </div>
 
       {/* Step workflow indicator */}
-      <AnalyzerWorkflowSteps currentStep={analysis ? "why" : "recall"} />
+      <AnalyzerWorkflowSteps currentStep={analysis ? "why" : "signals"} />
 
       <form onSubmit={onSubmit} className="border border-slate-800 rounded-xl p-6 bg-ink-900 shadow-lg space-y-4">
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -184,6 +184,7 @@ export default function Analyzer() {
           <HindsightRecall
             memories={analysis.recalled_memories}
             available={analysis.memory_available}
+            provider={analysis.memory_provider}
             error={analysis.memory_error}
           />
 
@@ -226,7 +227,11 @@ export default function Analyzer() {
           </div>
 
           {/* Why This Recommendation */}
-          <WhyRecommendation bullets={analysis.why_this_recommendation} memories={analysis.recalled_memories} />
+          <WhyRecommendation
+            bullets={analysis.why_this_recommendation}
+            memories={analysis.recalled_memories}
+            analysis={analysis}
+          />
 
           {/* Navigate to detail for Resolution & Retain */}
           <div className="flex justify-end pt-2">

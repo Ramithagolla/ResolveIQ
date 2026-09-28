@@ -7,11 +7,12 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.memory.hindsight_service import get_memory_service
 from app.schemas import EvaluationSummary
+from app.config import ROOT
 from app.services.incidents import run_held_out_evaluation
 
 router = APIRouter()
 
-DATA_DIR = Path(__file__).resolve().parents[2] / "data" / "incidents"
+DATA_DIR = ROOT / "data" / "incidents"
 
 
 @router.get("/evaluation", response_model=EvaluationSummary)

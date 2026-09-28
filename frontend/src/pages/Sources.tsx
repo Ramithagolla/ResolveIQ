@@ -45,23 +45,24 @@ export default function Sources() {
       <div>
         <div className="flex items-center gap-2 text-xs font-mono text-teal-400 uppercase tracking-wider">
           <ShieldCheck size={14} />
-          <span>Authoritative Postmortem Dataset</span>
+          <span>Incident Knowledge Sources</span>
         </div>
-        <h1 className="text-2xl font-bold text-white mt-1">PUBLIC INCIDENT DATA</h1>
+        <h1 className="text-2xl font-bold text-white mt-1">INCIDENT KNOWLEDGE SOURCES</h1>
         <p className="text-sm text-slate-400 mt-1 max-w-2xl leading-relaxed">
-          Curated dataset of real, publicly documented production postmortems from industry-leading engineering organizations.
+          Structured incident data used to seed organizational memory. Includes curated demo incidents and,
+          where available, attributed public engineering postmortems.
         </p>
       </div>
 
       {/* Metrics Banner */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="p-4 rounded-xl bg-ink-900 border border-slate-800 flex items-center gap-4">
           <div className="p-3 rounded-lg bg-teal-500/10 text-teal-400 border border-teal-500/20">
             <BookOpen size={22} />
           </div>
           <div>
             <div className="text-2xl font-bold text-white">{data.total_incidents}</div>
-            <div className="text-xs text-slate-400">Public Postmortems</div>
+            <div className="text-xs text-slate-400">Seeded Incidents</div>
           </div>
         </div>
 
@@ -71,17 +72,7 @@ export default function Sources() {
           </div>
           <div>
             <div className="text-2xl font-bold text-white">{orgs.length - 1}</div>
-            <div className="text-xs text-slate-400">Engineering Organizations</div>
-          </div>
-        </div>
-
-        <div className="p-4 rounded-xl bg-ink-900 border border-slate-800 flex items-center gap-4">
-          <div className="p-3 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            <ExternalLink size={22} />
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-white">100%</div>
-            <div className="text-xs text-slate-400">Attributed Source Links</div>
+            <div className="text-xs text-slate-400">Organizations</div>
           </div>
         </div>
       </div>
@@ -133,15 +124,21 @@ export default function Sources() {
                 <div className="text-xs text-slate-400 mt-0.5">Service: <span className="text-slate-200">{item.service}</span></div>
               </div>
 
-              <a
-                href={item.source_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/30 text-xs font-medium transition-colors shrink-0"
-              >
-                <span>Source: {item.organization} Postmortem</span>
-                <ExternalLink size={12} />
-              </a>
+              {item.source_url ? (
+                <a
+                  href={item.source_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/30 text-xs font-medium transition-colors shrink-0"
+                >
+                  <span>Source: {item.organization} Postmortem</span>
+                  <ExternalLink size={12} />
+                </a>
+              ) : (
+                <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-800/50 text-slate-500 border border-slate-700/50 text-xs shrink-0">
+                  Curated demo incident
+                </span>
+              )}
             </div>
 
             {/* Impact & Symptoms */}

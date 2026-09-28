@@ -42,12 +42,27 @@ export default function Dashboard() {
       <div>
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold tracking-tight text-white">ResolveIQ Dashboard</h1>
-          <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-full bg-teal-500/10 text-teal-300 border border-teal-500/20">
-            Hindsight Memory Active
-          </span>
+          {health && (
+            <span
+              className={`text-xs font-mono font-semibold px-2.5 py-1 rounded-full border ${
+                health.memory_provider === "hindsight" && health.memory_available
+                  ? "bg-teal-500/10 text-teal-300 border-teal-500/20"
+                  : health.memory_provider === "hindsight" && !health.memory_available
+                  ? "bg-rose-500/10 text-rose-300 border-rose-500/20"
+                  : "bg-amber-500/10 text-amber-300 border-amber-500/20"
+              }`}
+            >
+              {health.memory_provider === "hindsight" && health.memory_available
+                ? "● Hindsight Connected"
+                : health.memory_provider === "hindsight" && !health.memory_available
+                ? "● Hindsight Unavailable"
+                : "● Local Development Store"}
+            </span>
+          )}
         </div>
         <p className="text-slate-400 text-xs mt-1.5">{stats.note}</p>
       </div>
+
 
       {/* Prominent Hindsight Memory Engine Status Card */}
       <HindsightStatusCard health={health} memoryCount={stats.organizational_memories} />
