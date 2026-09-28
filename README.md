@@ -183,4 +183,9 @@ Dashboard, incident analysis, Hindsight recall list, memory detail, learning / m
 
 ## Articles
 Article 1 : https://medium.com/@singireddygeethasri/we-gave-our-incident-agent-a-memory-it-wasnt-enough-dce3396bec38
+
 Article 2 : https://medium.com/@ramithasri15/what-happens-when-an-ai-agent-remembers-your-production-incidents-8ddfcef91da6
+
+Reddit post 1: https: //www.reddit.com/r/LLMDevs/s/TwKhJoiX8n 
+Reddit Post 2: https://www.reddit.com/r/LLMDevs/s/LnyasnYHXp
+
