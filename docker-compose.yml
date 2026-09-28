@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: resolveiq-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - HINDSIGHT_BASE_URL=${HINDSIGHT_BASE_URL:-https://api.hindsight.vectorize.io}
+      - HINDSIGHT_API_KEY=${HINDSIGHT_API_KEY:-}
+      - HINDSIGHT_BANK_ID=${HINDSIGHT_BANK_ID:-resolveiq-incidents}
+      - LLM_API_KEY=${LLM_API_KEY:-}
+      - LLM_BASE_URL=${LLM_BASE_URL:-https://api.openai.com/v1}
+      - LLM_MODEL=${LLM_MODEL:-gpt-4o-mini}
+      - DATABASE_URL=sqlite:///./resolveiq.db
+      - MEMORY_PROVIDER=${MEMORY_PROVIDER:-local}
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: resolveiq-frontend
+    ports:
+      - "80:80"
+      - "5173:80"
+    depends_on:
+      - backend
+    restart: unless-stopped

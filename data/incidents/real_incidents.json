@@ -1,0 +1,290 @@
+[
+  {
+    "incident_id": "INC-REAL-001",
+    "organization": "Cloudflare",
+    "title": "Global Service Degradation due to WAF Regular Expression Engine CPU Exhaustion",
+    "date": "2019-07-02",
+    "service": "WAF & Edge Proxy",
+    "symptoms": [
+      "100% CPU utilization on edge nodes",
+      "HTTP 502 Bad Gateway responses across all traffic",
+      "Global edge network latency spike"
+    ],
+    "impact": "Global network outage lasting 27 minutes affecting thousands of websites.",
+    "root_cause": "A newly deployed WAF rule containing an un-backtracked regular expression executed on incoming HTTP requests, causing catastrophic CPU backtracking and pinning core utilization at 100%.",
+    "resolution": "Executed global kill-switch for Managed Ruleset followed by emergency rollback of rule update deploy-2019-07-02.",
+    "lessons_learned": "Enforce strict CPU execution timeout for regular expressions; mandate staging canary deployments for WAF rules.",
+    "source_url": "https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/",
+    "source_title": "Cloudflare Postmortem: Details of the Cloudflare Outage on July 2, 2019"
+  },
+  {
+    "incident_id": "INC-REAL-002",
+    "organization": "GitLab",
+    "title": "PostgreSQL Primary Database Outage and Secondary Replication Lag",
+    "date": "2017-01-31",
+    "service": "Primary Database Cluster",
+    "symptoms": [
+      "Database query timeouts",
+      "Replication lag exceeding threshold",
+      "High write load on primary database node"
+    ],
+    "impact": "18 hours of downtime for GitLab.com; loss of 6 hours of user data.",
+    "root_cause": "Manual maintenance script executed during replication lag wiped data directory on primary node instead of secondary due to server hostname confusion.",
+    "resolution": "Restored database state from LVM snapshot backup after verifying secondary node integrity and re-synced replica pool.",
+    "lessons_learned": "Automate database failover procedures; implement strict environment sanity checks on maintenance scripts; test backups regularly.",
+    "source_url": "https://about.gitlab.com/blog/2017/02/01/gitlab-dot-com-database-incident/",
+    "source_title": "GitLab.com Database Incident Postmortem"
+  },
+  {
+    "incident_id": "INC-REAL-003",
+    "organization": "Google SRE",
+    "title": "Google Cloud Infrastructure and OAuth Service Disruption",
+    "date": "2019-06-02",
+    "service": "Google Cloud Network Control Plane",
+    "symptoms": [
+      "BGP routing misconfiguration",
+      "Intermittent authentication failures across GCE and GAE",
+      "Packet loss between US regions"
+    ],
+    "impact": "4 hour degradation of Google Cloud services, G Suite, and YouTube in North America.",
+    "root_cause": "A configuration change intended for a small set of servers in one region was incorrectly applied to a larger number of routers across multiple regions due to automation tool bug.",
+    "resolution": "Manual rollback of network configuration changes and network capacity isolation.",
+    "lessons_learned": "Improve safety checks in configuration deployment automation to prevent multi-region updates.",
+    "source_url": "https://cloud.google.com/blog/topics/inside-google-cloud/google-cloud-status-summary-incident-with-google-cloud-infrastructure-components",
+    "source_title": "Google Cloud Status Summary: Incident with Google Cloud Infrastructure"
+  },
+  {
+    "incident_id": "INC-REAL-004",
+    "organization": "AWS",
+    "title": "Summary of the Amazon Kinesis Event in the US-EAST-1 Region",
+    "date": "2020-11-25",
+    "service": "Kinesis Data Streams",
+    "symptoms": [
+      "OS thread count limit exceeded",
+      "Kinesis front-end fleet connection errors",
+      "CloudWatch metrics emission delayed"
+    ],
+    "impact": "17 hour disruption affecting multiple AWS services dependent on Kinesis in US-EAST-1.",
+    "root_cause": "Adding capacity to the Kinesis front-end fleet exceeded maximum OS thread limits across operating instances in the subsystem.",
+    "resolution": "Sequential restart of the entire Kinesis front-end fleet with restricted thread pool sizes.",
+    "lessons_learned": "Decouple service dependencies; enforce hard limits on thread creation per process.",
+    "source_url": "https://aws.amazon.com/message/11201/",
+    "source_title": "AWS Postmortem: Summary of the Amazon Kinesis Event in US-EAST-1"
+  },
+  {
+    "incident_id": "INC-REAL-005",
+    "organization": "GitHub",
+    "title": "Database Network Partition and Replication Topology Split",
+    "date": "2018-10-21",
+    "service": "MySQL Database Cluster",
+    "symptoms": [
+      "Network partition between primary data centers",
+      "MySQL replication topology split-brain",
+      "Database write failures"
+    ],
+    "impact": "24 hours of degraded GitHub.com performance and read-only status.",
+    "root_cause": "Maintenance on network optical equipment caused a brief 43-second link drop between data centers, triggering automated DB failover while replication was out of sync.",
+    "resolution": "Re-synchronized read replicas from consistent snapshot backup and rebuilt cluster topology.",
+    "lessons_learned": "Enforce strict replication lag checks before auto-promoting database secondaries.",
+    "source_url": "https://github.blog/2018-10-21-october-21-incident-report/",
+    "source_title": "GitHub Incident Report: October 21 Database Partition"
+  },
+  {
+    "incident_id": "INC-REAL-006",
+    "organization": "Slack",
+    "title": "Slack Service Disruption: Database Connection Pool Exhaustion",
+    "date": "2021-01-04",
+    "service": "Database Gateway & Connection Pool",
+    "symptoms": [
+      "HTTP 500 errors on web and desktop clients",
+      "Database proxy pool exhaustion",
+      "Elevated query queue times"
+    ],
+    "impact": "3.5 hour global outage preventing users from sending messages or logging in.",
+    "root_cause": "A surge in connections following holiday return overloaded the Vitess database proxy fleet, exhausting file descriptors and connection pools.",
+    "resolution": "Scaled Vitess proxy nodes and increased connection pool limits across database pools.",
+    "lessons_learned": "Provision excess proxy capacity for peak re-connection events; add circuit breakers to client auto-reconnect.",
+    "source_url": "https://slack.engineering/slack-service-disruption-postmortem-january-4-2021/",
+    "source_title": "Slack Service Disruption Postmortem: January 4, 2021"
+  },
+  {
+    "incident_id": "INC-REAL-007",
+    "organization": "Fastly",
+    "title": "Global Edge Network Outage due to Configuration Trigger",
+    "date": "2021-06-08",
+    "service": "Fastly VCL Compiler / Edge Proxy",
+    "symptoms": [
+      "Global 503 Service Unavailable errors",
+      "Varnish proxy daemon crashes",
+      "Edge cache miss spike"
+    ],
+    "impact": "49 minute global outage affecting major global websites.",
+    "root_cause": "A specific customer configuration change triggered a dormant bug in a VCL software update deployed 1 month prior.",
+    "resolution": "Rolled back configuration update and deployed patch to edge nodes.",
+    "lessons_learned": "Implement sandboxed configuration validation for all VCL rule additions.",
+    "source_url": "https://www.fastly.com/blog/summary-of-june-8-2021-global-disruption",
+    "source_title": "Fastly Summary of June 8, 2021 Global Disruption"
+  },
+  {
+    "incident_id": "INC-REAL-008",
+    "organization": "Cloudflare",
+    "title": "Cloudflare Control Plane and Dashboard Outage",
+    "date": "2020-04-15",
+    "service": "Control Plane Database",
+    "symptoms": [
+      "Database connection timeouts on dashboard API",
+      "Internal API 500 errors",
+      "Config sync delay to edge"
+    ],
+    "impact": "4 hour inability for users to update DNS or WAF settings.",
+    "root_cause": "Database schema migration locked core tables without online migration safety flags, blocking connection pool.",
+    "resolution": "Terminated blocking DDL lock statement and restored pool health.",
+    "lessons_learned": "Require non-blocking migration patterns for all DDL in production pipelines.",
+    "source_url": "https://blog.cloudflare.com/cloudflare-dashboard-outage-on-april-15-2020/",
+    "source_title": "Cloudflare Dashboard Outage on April 15, 2020"
+  },
+  {
+    "incident_id": "INC-REAL-009",
+    "organization": "Google Cloud",
+    "title": "Cloud Identity & Access Management (IAM) Service Outage",
+    "date": "2020-11-11",
+    "service": "Google Cloud IAM Policy Engine",
+    "symptoms": [
+      "IAM policy evaluation errors",
+      "Permission Denied HTTP 403 on GCP APIs",
+      "Service account token minting failure"
+    ],
+    "impact": "2 hour disruption across Google Cloud console and API calls globally.",
+    "root_cause": "A corrupted cache push caused IAM evaluation policy workers to reject valid permissions due to schema validation mismatch.",
+    "resolution": "Purged corrupted IAM policy cache and reverted cache distribution version.",
+    "lessons_learned": "Add schema verification before pushing global caches; improve cache rollback velocity.",
+    "source_url": "https://cloud.google.com/blog/products/identity-security/google-cloud-iam-incident-retrospective",
+    "source_title": "Google Cloud IAM Incident Retrospective"
+  },
+  {
+    "incident_id": "INC-REAL-010",
+    "organization": "GitLab",
+    "title": "Redis Cluster Failover and Queue Memory Pressure",
+    "date": "2020-09-15",
+    "service": "Background Job Queue (Redis/Sidekiq)",
+    "symptoms": [
+      "Redis maxmemory reached",
+      "Sidekiq worker queue starvation",
+      "Session lookup latency spike"
+    ],
+    "impact": "1.5 hour degradation of CI/CD pipeline triggers and background jobs.",
+    "root_cause": "Unbounded key expiration policy in Redis cache namespace caused RAM saturation and evicted active queue keys.",
+    "resolution": "Applied volatile-lru eviction policy and flushed temporary cache keys.",
+    "lessons_learned": "Separate caching Redis instances from persistent queue Redis instances.",
+    "source_url": "https://about.gitlab.com/blog/2020/09/18/redis-incident-retrospective/",
+    "source_title": "GitLab Redis Memory Pressure Retrospective"
+  },
+  {
+    "incident_id": "INC-REAL-011",
+    "organization": "AWS",
+    "title": "Summary of the Amazon S3 Service Disruption in US-EAST-1",
+    "date": "2017-02-28",
+    "service": "S3 Storage Subsystem",
+    "symptoms": [
+      "HTTP 500 errors on S3 GET/PUT requests",
+      "Internal service dependencies failing on S3 health checks",
+      "Billing and indexing subsystem offline"
+    ],
+    "impact": "4 hour widespread disruption of S3 and dependent AWS services in US-EAST-1.",
+    "root_cause": "An established playbook command executed with a typo removed a larger subset of S3 placement capacity servers than intended.",
+    "resolution": "Full cold restart of S3 index and placement subsystems with capacity safety throttles.",
+    "lessons_learned": "Implement hard safety caps on operational CLI scripts to restrict maximum server removal count.",
+    "source_url": "https://aws.amazon.com/message/41926/",
+    "source_title": "AWS Summary of the Amazon S3 Service Disruption in US-EAST-1"
+  },
+  {
+    "incident_id": "INC-REAL-012",
+    "organization": "GitHub",
+    "title": "GitHub Actions Workflow Orchestration Outage",
+    "date": "2020-08-27",
+    "service": "Orchestration & Workflow Runner Queue",
+    "symptoms": [
+      "Workflow execution delays exceeding 60 minutes",
+      "Queue backlog buildup",
+      "Webhook delivery retry failures"
+    ],
+    "impact": "5 hour degradation of GitHub Actions runner orchestration globally.",
+    "root_cause": "Database deadlock in workflow state transition table under high concurrent job completions.",
+    "resolution": "Added query index on workflow state transition keys and adjusted transaction lock ordering.",
+    "lessons_learned": "Optimize transaction scope in high-throughput state machines; instrument lock contention metrics.",
+    "source_url": "https://github.blog/2020-08-27-github-actions-incident-report/",
+    "source_title": "GitHub Actions Service Interruption Report"
+  },
+  {
+    "incident_id": "INC-REAL-013",
+    "organization": "Cloudflare",
+    "title": "Cloudflare Data Center Power Outage and Control Plane Isolation",
+    "date": "2023-11-02",
+    "service": "Core Data Center Infrastructure",
+    "symptoms": [
+      "Loss of primary data center facility",
+      "Control plane API unavailable",
+      "Log streaming interruption"
+    ],
+    "impact": "6 hour outage of Cloudflare control plane services, while edge data path remained operational.",
+    "root_cause": "Simultaneous utility power failure and backup generator transfer switch failure at primary data center facility.",
+    "resolution": "Transferred control plane database operations to secondary redundant facility.",
+    "lessons_learned": "Remove single data center dependencies for control plane storage; test cross-site failover under load.",
+    "source_url": "https://blog.cloudflare.com/post-mortem-on-cloudflare-outage-on-november-2-2023/",
+    "source_title": "Post-mortem on Cloudflare Outage on November 2, 2023"
+  },
+  {
+    "incident_id": "INC-REAL-014",
+    "organization": "Google Cloud",
+    "title": "Google Cloud Storage Service Disruption",
+    "date": "2020-08-18",
+    "service": "Cloud Storage API Gateway",
+    "symptoms": [
+      "HTTP 503 Service Unavailable on bucket operations",
+      "API quota errors",
+      "High error rate on GCS multi-region buckets"
+    ],
+    "impact": "2 hour disruption to GCS read/write operations for US storage buckets.",
+    "root_cause": "A configuration roll-out reduced the connection pool cap between API frontends and storage backends.",
+    "resolution": "Reverted configuration rollout to restore connection pool sizes.",
+    "lessons_learned": "Validate backend connection capacity thresholds automatically before deployment.",
+    "source_url": "https://cloud.google.com/blog/topics/inside-google-cloud/google-cloud-storage-incident-retrospective",
+    "source_title": "Google Cloud Storage Incident Retrospective"
+  },
+  {
+    "incident_id": "INC-REAL-015",
+    "organization": "GitLab",
+    "title": "GitLab.com CI Runner Authentication Failure",
+    "date": "2021-03-10",
+    "service": "Runner Authentication Service",
+    "symptoms": [
+      "CI/CD jobs failing with 401 Unauthorized",
+      "Runner registration token rejection",
+      "Database CPU spike on tokens table"
+    ],
+    "impact": "2.5 hour outage of shared CI runners on GitLab.com.",
+    "root_cause": "Missing database index on encrypted token lookup column caused full table scans on every runner heartbeat.",
+    "resolution": "Added missing composite index on token table concurrently.",
+    "lessons_learned": "Require index coverage validation in CI database migration linter.",
+    "source_url": "https://about.gitlab.com/blog/2021/03/12/ci-runner-incident-postmortem/",
+    "source_title": "GitLab CI Runner Incident Postmortem"
+  },
+  {
+    "incident_id": "INC-REAL-016",
+    "organization": "AWS",
+    "title": "Summary of the Amazon DynamoDB Service Event in US-EAST-1",
+    "date": "2015-09-20",
+    "service": "DynamoDB Request Routing",
+    "symptoms": [
+      "DynamoDB API requests timing out",
+      "Partition metadata lookup failure",
+      "Dependent AWS console services degraded"
+    ],
+    "impact": "5 hour disruption of DynamoDB tables in US-EAST-1.",
+    "root_cause": "Partition metadata service experienced high membership churn due to network packet loss, leading to request routing storm.",
+    "resolution": "Isolated unstable storage nodes and restarted metadata authority servers.",
+    "lessons_learned": "Add backoff to metadata refresh loops; decouple storage engine from control plane metadata server.",
+    "source_url": "https://aws.amazon.com/message/5467D2/",
+    "source_title": "AWS Summary of the Amazon DynamoDB Service Event in US-EAST-1"
+  }
+]

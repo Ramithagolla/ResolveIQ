@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: #0b0d12;
+  min-height: 100vh;
+}
+
+.bar {
+  height: 8px;
+  background: #2dd4bf;
+  border-radius: 2px;
+}
